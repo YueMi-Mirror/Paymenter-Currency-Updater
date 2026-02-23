@@ -26,12 +26,12 @@
             <div class="fi-tabs-list">
                 <button
                     wire:click="switchTab('rates')"
-                    class="px-4 py-2 text-sm font-medium rounded-md {{ $activeTab === 'rates' ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700' }}">
+                    class="fi-tab-btn {{ $activeTab === 'rates' ? 'fi-tab-active' : '' }}">
                     Exchange Rates
                 </button>
                 <button
                     wire:click="switchTab('config')"
-                    class="px-4 py-2 text-sm font-medium rounded-md {{ $activeTab === 'config' ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700' }}">
+                    class="fi-tab-btn {{ $activeTab === 'config' ? 'fi-tab-active' : '' }}">
                     API Configuration
                 </button>
             </div>
@@ -60,7 +60,6 @@
                     <table class="fi-table">
                         <thead>
                             <tr>
-                                <th>Default</th>
                                 <th>Code</th>
                                 <th>Rate (1 Base = x Code)</th>
                                 <th>Enabled</th>
@@ -71,11 +70,6 @@
                             @php $rates = $this->getRates(); @endphp
                             @forelse ($rates as $rate)
                             <tr>
-                                <td>
-                                    @if ($rate->is_default)
-                                    <span class="fi-badge fi-badge-success">Default</span>
-                                    @endif
-                                </td>
                                 <td>
                                     <input type="text"
                                         value="{{ $rate->code }}"
@@ -95,6 +89,9 @@
                                     onchange="@this.updateRate({{ $rate->id }}, 'enabled', this.checked)">
                                 </td>
                                 <td>
+                                    @if ($rate->is_default)
+                                    <span class="fi-badge fi-badge-success">Default</span>
+                                    @endif
                                     @if (! $rate->is_default)
                                     <button class="fi-btn fi-btn-color-secondary fi-btn-size-xs"
                                         wire:click="setDefault({{ $rate->id }})">
@@ -136,39 +133,38 @@
             <div class="fi-body">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">API URL</label>
+                        <label class="fi-label">API URL</label>
                         <input type="url"
                             wire:model="apiUrl"
                             class="fi-input w-full"
                             placeholder="https://v6.exchangerate-api.com/v6/YOUR_API_KEY/latest/">
-                        <p class="text-sm text-gray-500 mt-1">
+                        <p class="fi-hint">
                             Examples:<br>
-                            • ExchangeRate-API: <code>https://v6.exchangerate-api.com/v6/&lt;KEY&gt;/latest/</code> (base auto-appended)<br>
-                            • Frankfurter: <code>https://api.frankfurter.app/latest</code>
+                            • ExchangeRate-API: <code class="fi-code">https://v6.exchangerate-api.com/v6/&lt;KEY&gt;/latest/</code> (base auto-appended)<br>
+                            • Frankfurter: <code class="fi-code">https://api.frankfurter.app/latest</code>
                         </p>
                     </div>
 
-
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Timeout (seconds)</label>
+                        <label class="fi-label">Timeout (seconds)</label>
                         <input type="number"
                             wire:model="timeout"
                             min="1"
                             max="30"
                             class="fi-input w-32"
                             placeholder="8">
-                        <p class="text-sm text-gray-500 mt-1">Request timeout in seconds (1–30).</p>
+                        <p class="fi-hint">Request timeout in seconds (1–30).</p>
                     </div>
                 </div>
 
-                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h4 class="font-semibold text-blue-900 mb-2">Recommended API Providers</h4>
+                <div class="fi-info-box">
+                    <h4 class="fi-info-title">Recommended API Providers</h4>
                     <div class="space-y-2 text-sm">
                         <div><strong>Frankfurter.app (Free, Recommended):</strong> https://api.frankfurter.app/latest</div>
                         <div><strong>ExchangeRate-API Base URL:</strong> https://v6.exchangerate-api.com/v6/YOUR_API_KEY/latest/</div>
-                        <div class="text-blue-600"><strong>Tip:</strong> Replace YOUR_API_KEY with your actual ExchangeRate-API key</div>
-                        <div class="text-orange-600"><strong>Note:</strong> The system will automatically append your base currency to the URL</div>
-                        <div class="text-gray-600"><strong>Get API Key:</strong> Visit <a href="https://www.exchangerate-api.com/" target="_blank" class="text-blue-600 underline">exchangerate-api.com</a> to get your free API key</div>
+                        <div class="fi-info-tip"><strong>Tip:</strong> Replace YOUR_API_KEY with your actual ExchangeRate-API key</div>
+                        <div class="fi-info-note"><strong>Note:</strong> The system will automatically append your base currency to the URL</div>
+                        <div class="fi-info-muted"><strong>Get API Key:</strong> Visit <a href="https://www.exchangerate-api.com/" target="_blank" class="fi-link">exchangerate-api.com</a> to get your free API key</div>
                     </div>
                 </div>
             </div>
@@ -177,32 +173,44 @@
     </div>
 
     <!-- Footer with version info -->
-    <div class="mt-6 text-center text-sm text-gray-500">
+    <div class="mt-6 text-center fi-footer-text">
         Currency Exchanger v1.4 - Automatic Exchange Rate Updates for Paymenter
     </div>
 
     <style>
+        /* ── Banner ──────────────────────────────────────────── */
         .fi-banner {
             display: flex;
             gap: 12px;
             padding: 14px 16px;
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
+            background: rgba(var(--gray-50, 248 250 252), 1);
+            border: 1px solid rgba(var(--gray-200, 229 231 235), 1);
             border-radius: 12px;
+        }
+        .dark .fi-banner {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .fi-banner-title {
             font-weight: 600;
-            color: #0f172a;
+            color: rgba(var(--gray-950, 15 23 42), 1);
+        }
+        .dark .fi-banner-title {
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .fi-banner-desc {
-            color: #475569;
+            color: rgba(var(--gray-500, 71 85 105), 1);
+        }
+        .dark .fi-banner-desc {
+            color: rgba(255, 255, 255, 0.55);
         }
 
         .fi-banner-icon {
             width: 22px;
             height: 22px;
+            min-width: 22px;
             border-radius: 999px;
             background: linear-gradient(135deg, #6366f1, #22d3ee);
             color: #fff;
@@ -214,15 +222,49 @@
             margin-top: 2px;
         }
 
+        /* ── Tabs ────────────────────────────────────────────── */
         .fi-tabs-list {
             display: flex;
             gap: 8px;
         }
 
+        .fi-tab-btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            color: rgba(var(--gray-500, 107 114 128), 1);
+            transition: all 0.2s ease;
+        }
+        .fi-tab-btn:hover {
+            color: rgba(var(--gray-700, 55 65 81), 1);
+            background: rgba(var(--gray-100, 243 244 246), 1);
+        }
+        .fi-tab-btn.fi-tab-active {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+        .dark .fi-tab-btn {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .dark .fi-tab-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .dark .fi-tab-btn.fi-tab-active {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+        }
+
+        /* ── Card ────────────────────────────────────────────── */
         .fi-card {
-            border: 1px solid #e5e7eb;
+            border: 1px solid rgba(var(--gray-200, 229 231 235), 1);
             border-radius: 12px;
-            background: #fff;
+            background: rgba(var(--gray-50, 255 255 255), 1);
+        }
+        .dark .fi-card {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .fi-toolbar {
@@ -230,18 +272,27 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 14px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid rgba(var(--gray-200, 229 231 235), 1);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .dark .fi-toolbar {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
         }
 
         .fi-title {
             font-weight: 600;
-            color: #0f172a;
+            color: rgba(var(--gray-950, 15 23 42), 1);
+        }
+        .dark .fi-title {
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .fi-body {
             padding: 14px;
         }
 
+        /* ── Buttons ─────────────────────────────────────────── */
         .fi-btn {
             display: inline-flex;
             align-items: center;
@@ -251,45 +302,66 @@
             font-size: 12px;
             font-weight: 600;
             border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+        .fi-btn:hover { opacity: 0.85; }
 
-        .fi-btn-size-sm {
-            padding: 6px 10px;
-        }
-
-        .fi-btn-size-xs {
-            padding: 4px 8px;
-            font-size: 11px;
-        }
+        .fi-btn-size-sm { padding: 6px 10px; }
+        .fi-btn-size-xs { padding: 4px 8px; font-size: 11px; }
 
         .fi-btn-color-primary {
-            background: #eef2ff;
-            color: #3730a3;
-            border-color: #c7d2fe;
+            background: rgba(99, 102, 241, 0.1);
+            color: #4f46e5;
+            border-color: rgba(99, 102, 241, 0.25);
+        }
+        .dark .fi-btn-color-primary {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border-color: rgba(99, 102, 241, 0.3);
         }
 
         .fi-btn-color-success {
-            background: #ecfeff;
-            color: #0e7490;
-            border-color: #a5f3fc;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+        .dark .fi-btn-color-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.3);
         }
 
         .fi-btn-color-warning {
-            background: #fffbeb;
-            color: #92400e;
-            border-color: #fde68a;
+            background: rgba(245, 158, 11, 0.1);
+            color: #b45309;
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+        .dark .fi-btn-color-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.3);
         }
 
         .fi-btn-color-secondary {
-            background: #f4f4f5;
-            color: #1f2937;
-            border-color: #e5e7eb;
+            background: rgba(var(--gray-100, 243 244 246), 1);
+            color: rgba(var(--gray-700, 55 65 81), 1);
+            border-color: rgba(var(--gray-200, 229 231 235), 1);
+        }
+        .dark .fi-btn-color-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
+        /* ── Table ───────────────────────────────────────────── */
         .fi-table-wrap {
             overflow: auto;
-            border: 1px solid #e5e7eb;
+            border: 1px solid rgba(var(--gray-200, 229 231 235), 1);
             border-radius: 10px;
+        }
+        .dark .fi-table-wrap {
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .fi-table {
@@ -300,49 +372,190 @@
         .fi-table th,
         .fi-table td {
             padding: 10px 12px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid rgba(var(--gray-200, 229 231 235), 1);
+        }
+        .dark .fi-table th,
+        .dark .fi-table td {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
         }
 
         .fi-table th {
             text-align: left;
             font-size: 12px;
-            color: #475569;
+            color: rgba(var(--gray-500, 71 85 105), 1);
             font-weight: 600;
         }
+        .dark .fi-table th {
+            color: rgba(255, 255, 255, 0.55);
+        }
 
+        .fi-table td {
+            color: rgba(var(--gray-900, 15 23 42), 1);
+        }
+        .dark .fi-table td {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .fi-table tbody tr:hover {
+            background: rgba(var(--gray-50, 248 250 252), 1);
+        }
+        .dark .fi-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* ── Inputs ──────────────────────────────────────────── */
         .fi-input {
-            border: 1px solid #e5e7eb;
+            border: 1px solid rgba(var(--gray-200, 229 231 235), 1);
             border-radius: 8px;
             padding: 8px 10px;
             font-size: 13px;
             width: 100%;
+            background: transparent;
+            color: inherit;
+            transition: border-color 0.2s ease;
+        }
+        .fi-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+        }
+        .dark .fi-input {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .dark .fi-input:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
         }
 
+        /* ── Badge ───────────────────────────────────────────── */
         .fi-badge {
-            padding: 2px 6px;
+            padding: 2px 8px;
             border-radius: 999px;
             font-size: 11px;
+            font-weight: 600;
         }
-
         .fi-badge-success {
-            background: #ecfdf5;
-            color: #065f46;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+        .dark .fi-badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
         }
 
+        /* ── Checkbox ────────────────────────────────────────── */
         .fi-checkbox {
             width: 18px;
             height: 18px;
             accent-color: #6366f1;
+            cursor: pointer;
         }
 
+        /* ── Text classes ────────────────────────────────────── */
         .fi-empty {
-            color: #475569;
+            color: rgba(var(--gray-500, 71 85 105), 1);
+        }
+        .dark .fi-empty {
+            color: rgba(255, 255, 255, 0.45);
         }
 
         .fi-tip {
-            color: #667085;
+            color: rgba(var(--gray-500, 107 114 128), 1);
             font-size: 13px;
             margin-top: 10px;
+        }
+        .dark .fi-tip {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .fi-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(var(--gray-700, 55 65 81), 1);
+            margin-bottom: 8px;
+        }
+        .dark .fi-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .fi-hint {
+            font-size: 13px;
+            color: rgba(var(--gray-500, 107 114 128), 1);
+            margin-top: 4px;
+        }
+        .dark .fi-hint {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .fi-code {
+            font-size: 12px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            background: rgba(var(--gray-100, 243 244 246), 1);
+            color: rgba(var(--gray-700, 55 65 81), 1);
+        }
+        .dark .fi-code {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .fi-footer-text {
+            font-size: 14px;
+            color: rgba(var(--gray-500, 107 114 128), 1);
+        }
+        .dark .fi-footer-text {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ── Info Box ────────────────────────────────────────── */
+        .fi-info-box {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 12px;
+        }
+        .dark .fi-info-box {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .fi-info-title {
+            font-weight: 600;
+            color: #3730a3;
+            margin-bottom: 8px;
+        }
+        .dark .fi-info-title {
+            color: #a5b4fc;
+        }
+
+        .fi-info-box > div {
+            color: rgba(var(--gray-700, 55 65 81), 1);
+        }
+        .dark .fi-info-box > div {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .fi-info-tip { color: #4f46e5; }
+        .dark .fi-info-tip { color: #a5b4fc; }
+
+        .fi-info-note { color: #b45309; }
+        .dark .fi-info-note { color: #fbbf24; }
+
+        .fi-info-muted {
+            color: rgba(var(--gray-500, 107 114 128), 1);
+        }
+        .dark .fi-info-muted {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .fi-link {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+        .dark .fi-link {
+            color: #a5b4fc;
         }
     </style>
 </x-filament-panels::page>
